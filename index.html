@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UUID Generator Pro - Generate UUIDs Instantly</title>
+    <meta name="description" content="Generate UUID v4, v1, and NIL UUIDs instantly. Bulk generation, validation, and multiple format outputs for developers.">
+    <meta property="og:title" content="UUID Generator Pro">
+    <meta property="og:description" content="Generate UUIDs in multiple versions with validation and bulk generation">
+    <meta property="og:type" content="website">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#8b5cf6',
+                        accent: '#06b6d4',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'shimmer': 'shimmer 2s linear infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                    },
+                    keyframes: {
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% 0' },
+                            '100%': { backgroundPosition: '200% 0' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background: #0a0a0a;
+            min-height: 100vh;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-button {
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-button::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4, #3b82f6);
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .glow-button:hover::before {
+            opacity: 1;
+        }
+        .uuid-display {
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.05em;
+        }
+        .shimmer-bg {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            background-size: 200% 100%;
+        }
+    </style>
+</head>
+<body class="text-gray-100 font-sans">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold">UUID Generator Pro</span>
+                </div>
+                <a href="#pricing" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-all glow-button">
+                    Get Pro
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-4">
+        <div class="max-w-5xl mx-auto text-center">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-fade-in">
+                Generate <span class="gradient-text">UUIDs</span> Instantly
+            </h1>
+            <p class="text-xl text-gray-400 mb-12 max-w-2xl mx-auto animate-slide-up" style="animation-delay: 0.1s">
+                Professional UUID generation tool with v4, v1, and NIL support. 
+                Bulk generation, validation, and multiple formats for developers.
+            </p>
+            
+            <!-- Main Generator Demo -->
+            <div class="glass-card rounded-2xl p-8 mb-12 animate-slide-up" style="animation-delay: 0.2s">
+                <div class="flex flex-col md:flex-row gap-4 items-center justify-center mb-6">
+                    <select id="uuidVersion" class="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500">
+                        <option value="v4">UUID v4 (Random)</option>
+                        <option value="v1">UUID v1 (Timestamp)</option>
+                        <option value="nil">NIL UUID</option>
+                    </select>
+                    <select id="quantity" class="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500">
+                        <option value="1">1 UUID</option>
+                        <option value="5">5 UUIDs</option>
+                        <option value="10">10 UUIDs</option>
+                        <option value="50">50 UUIDs</option>
+                        <option value="100">100 UUIDs</option>
+                    </select>
+                    <button onclick="generateUUIDs()" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-semibold hover:shadow-lg hover:shadow-blue-500/25 transition-all glow-button">
+                        Generate UUIDs
+                    </button>
+                </div>
+                
+                <div id="uuidOutput" class="bg-gray-900 rounded-xl p-6 min-h-[120px] flex flex-col items-center justify-center">
+                    <p class="text-gray-500 mb-4">Click "Generate UUIDs" to create unique identifiers</p>
+                </div>
+                
+                <div class="flex gap-4 justify-center mt-4">
+                    <button onclick="copyAll()" class="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        Copy All
+                    </button>
+                    <button onclick="downloadUUIDs()" class="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        Download
+                    </button>
+                    <button onclick="clearOutput()" class="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+                <div class="text-center">
+                    <div class="text-3xl font-bold gradient-text">3</div>
+                    <div class="text-gray-500 text-sm">UUID Versions</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold gradient-text">1000+</div>
+                    <div class="text-gray-500 text-sm">Bulk Generate</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold gradient-text">Instant</div>
+                    <div class="text-gray-500 text-sm">Generation</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-16">
+                Everything You Need for <span class="gradient-text">UUID Generation</span>
+            </h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card rounded-xl p-6 hover:border-blue-500/50 transition-colors">
+                    <div class="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">UUID v1 (Timestamp)</h3>
+                    <p class="text-gray-400 text-sm">Time-based UUIDs with embedded timestamp for chronological sorting.</p>
+                </div>
+
+                <div class="glass-card rounded-xl p-6 hover:border-purple-500/50 transition-colors">
+                    <div class="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">UUID v4 (Random)</h3>
+                    <p class="text-gray-400 text-sm">Cryptographically random UUIDs for maximum uniqueness guarantee.</p>
+                </div>
+
+                <div class="glass-card rounded-xl p-6 hover:border-cyan-500/50 transition-colors">
+                    <div class="w-12 h-12 rounded-lg bg-cyan-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Bulk Generation</h3>
+                    <p class="text-gray-400 text-sm">Generate up to 1000 UUIDs at once with a single click.</p>
+                </div>
+
+                <div class="glass-card rounded-xl p-6 hover:border-green-500/50 transition-colors">
+                    <div class="w-12 h-12 rounded-lg bg-green-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">UUID Validation</h3>
+                    <p class="text-gray-400 text-sm">Validate any UUID string to check format and version compliance.</p>
+                </div>
+
+                <div class="glass-card rounded-xl p-6 hover:border-orange-500/50 transition-colors">
+                    <div class="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Multiple Formats</h3>
+                    <p class="text-gray-400 text-sm">Output as standard, no-dashes, or URL-safe base64 formats.</p>
+                </div>
+
+                <div class="glass-card rounded-xl p-6 hover:border-pink-500/50 transition-colors">
+                    <div class="w-12 h-12 rounded-lg bg-pink-500/20 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Export Options</h3>
+                    <p class="text-gray-400 text-sm">Copy to clipboard or download as TXT, JSON, or CSV files.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Validator Section -->
+    <section class="py-20 px-4 bg-gradient-to-b from-transparent to-gray-900/50">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-8">
+                Validate <span class="gradient-text">Any UUID</span>
+            </h2>
+            <div class="glass-card rounded-2xl p-8">
+                <div class="flex gap-4">
+                    <input type="text" id="validateInput" placeholder="Enter UUID to validate (e.g., 550e8400-e29b-41d4-a716-446655440000)" 
+                        class="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 font-mono text-sm">
+                    <button onclick="validateUUID()" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-semibold hover:shadow-lg transition-all">
+                        Validate
+                    </button>
+                </div>
+                <div id="validationResult" class="mt-4"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-4">Simple Pricing</h2>
+            <p class="text-gray-400 mb-12">One-time payment. Unlimited usage. Forever.</p>
+            
+            <div class="glass-card rounded-2xl p-8 max-w-md mx-auto border-2 border-blue-500/50 relative">
+                <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full text-sm font-semibold">
+                    Most Popular
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Pro License</h3>
+                <div class="text-5xl font-bold gradient-text mb-6">\$9</div>
+                <ul class="text-left space-y-3 mb-8">
+                    <li class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        All UUID versions (v1, v4, NIL)
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Bulk generation up to 1000
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        UUID validation tool
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Export to JSON/CSV/TXT
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Lifetime updates
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Commercial use license
+                    </li>
+                </ul>
+                <button class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl font-bold text-lg hover:shadow-lg hover:shadow-blue-500/25 transition-all glow-button">
+                    Get Pro License
+                </button>
+                <p class="text-sm text-gray-500 mt-4">One-time payment. No subscription.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 px-4">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+            
+            <div class="space-y-4">
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="font-semibold mb-2">What's the difference between UUID v1 and v4?</h3>
+                    <p class="text-gray-400 text-sm">UUID v1 is timestamp-based and includes the time of creation, making it sortable chronologically. UUID v4 is completely random and offers better privacy since it doesn't expose any system information.</p>
+                </div>
+                
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="font-semibold mb-2">Are the generated UUIDs truly unique?</h3>
+                    <p class="text-gray-400 text-sm">UUID v4 provides 2^122 possible combinations, making the probability of collision astronomically low (approximately 1 in 2.71 quintillion). For all practical purposes, they are unique.</p>
+                </div>
+                
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="font-semibold mb-2">Can I use this commercially?</h3>
+                    <p class="text-gray-400 text-sm">Yes! The Pro license includes full commercial usage rights. Use generated UUIDs in your products, services, or client work without any restrictions.</p>
+                </div>
+                
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="font-semibold mb-2">What formats can I export to?</h3>
+                    <p class="text-gray-400 text-sm">You can export UUIDs as plain text (.txt), JSON array (.json), or CSV (.csv) formats. All formats include proper formatting for immediate use in your projects.</p>
+                </div>
+                
+                <div class="glass-card rounded-xl p-6">
+                    <h3 class="font-semibold mb-2">Is there a limit on how many UUIDs I can generate?</h3>
+                    <p class="text-gray-400 text-sm">With the Pro license, you can generate up to 1000 UUIDs per batch, with unlimited total generations. Generate as many as you need for your projects.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-12 px-4">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                </div>
+                <span class="font-semibold">UUID Generator Pro</span>
+            </div>
+            <div class="text-gray-500 text-sm">
+                © 2024 UUID Generator Pro. All rights reserved.
+            </div>
+            <div class="flex gap-6 text-sm">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors">Terms</a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentUUIDs = [];
+
+        function generateUUIDv4() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        function generateUUIDv1() {
+            const timestamp = Date.now();
+            const timeHex = timestamp.toString(16).padStart(12, '0');
+            const clockSeq = Math.floor(Math.random() * 16384).toString(16).padStart(4, '0');
+            const node = Array(6).fill(0).map(() => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join('');
+            return `${timeHex.slice(0, 8)}-${timeHex.slice(8, 12)}-1${clockSeq.slice(0, 3)}-${clockSeq.slice(3)}-${node}`;
+        }
+
+        function generateNILUUID() {
+            return '00000000-0000-0000-0000-000000000000';
+        }
+
+        function generateUUIDs() {
+            const version = document.getElementById('uuidVersion').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const output = document.getElementById('uuidOutput');
+            
+            currentUUIDs = [];
+            
+            for (let i = 0; i < quantity; i++) {
+                let uuid;
+                switch(version) {
+                    case 'v4': uuid = generateUUIDv4(); break;
+                    case 'v1': uuid = generateUUIDv1(); break;
+                    case 'nil': uuid = generateNILUUID(); break;
+                    default: uuid = generateUUIDv4();
+                }
+                currentUUIDs.push(uuid);
+            }
+            
+            displayUUIDs();
+        }
+
+        function displayUUIDs() {
+            const output = document.getElementById('uuidOutput');
+            if (currentUUIDs.length === 0) {
+                output.innerHTML = '<p class="text-gray-500">Click "Generate UUIDs" to create unique identifiers</p>';
+                return;
+            }
+            
+            if (currentUUIDs.length === 1) {
+                output.innerHTML = `
+                    <div class="text-center">
+                        <div class="uuid-display text-2xl md:text-3xl text-blue-400 mb-4 break-all">${currentUUIDs[0]}</div>
+                        <button onclick="copyToClipboard('${currentUUIDs[0]}')" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm transition-colors">
+                            Copy to Clipboard
+                        </button>
+                    </div>
+                `;
+            } else {
+                output.innerHTML = `
+                    <div class="w-full max-h-64 overflow-y-auto text-left space-y-2">
+                        ${currentUUIDs.map((uuid, i) => `
+                            <div class="flex items-center gap-2 p-2 bg-gray-800/50 rounded-lg">
+                                <span class="text-gray-500 text-sm w-8">${i + 1}.</span>
+                                <span class="uuid-display text-blue-400 flex-1 text-sm">${uuid}</span>
+                                <button onclick="copyToClipboard('${uuid}')" class="p-1 hover:bg-gray-700 rounded transition-colors" title="Copy">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="mt-4 text-gray-400 text-sm">Generated ${currentUUIDs.length} UUIDs</div>
+                `;
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification('Copied to clipboard!');
+            });
+        }
+
+        function copyAll() {
+            if (currentUUIDs.length === 0) {
+                showNotification('No UUIDs to copy');
+                return;
+            }
+            navigator.clipboard.writeText(currentUUIDs.join('\n')).then(() => {
+                showNotification(`Copied ${currentUUIDs.length} UUIDs to clipboard!`);
+            });
+        }
+
+        function downloadUUIDs() {
+            if (currentUUIDs.length === 0) {
+                showNotification('No UUIDs to download');
+                return;
+            }
+            const blob = new Blob([currentUUIDs.join('\n')], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `uuids-${new Date().toISOString().slice(0, 10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showNotification('Download started!');
+        }
+
+        function clearOutput() {
+            currentUUIDs = [];
+            displayUUIDs();
+        }
+
+        function validateUUID() {
+            const input = document.getElementById('validateInput').value.trim();
+            const result = document.getElementById('validationResult');
+            
+            if (!input) {
+                result.innerHTML = '<p class="text-yellow-400">Please enter a UUID to validate</p>';
+                return;
+            }
+            
+            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+            const nilUUID = /^00000000-0000-0000-0000-000000000000$/;
+            
+            if (nilUUID.test(input)) {
+                result.innerHTML = `
+                    <div class="flex items-center gap-3 text-green-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <div class="font-semibold">Valid NIL UUID</div>
+                            <div class="text-sm text-gray-400">This is a special nil UUID (all zeros)</div>
+                        </div>
+                    </div>
+                `;
+            } else if (uuidRegex.test(input)) {
+                const version = input.charAt(14);
+                const variant = input.charAt(19);
+                result.innerHTML = `
+                    <div class="flex items-center gap-3 text-green-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <div class="font-semibold">Valid UUID v${version}</div>
+                            <div class="text-sm text-gray-400">Format and version byte are correct</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                result.innerHTML = `
+                    <div class="flex items-center gap-3 text-red-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <div class="font-semibold">Invalid UUID</div>
+                            <div class="text-sm text-gray-400">The format does not match UUID specification</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50 animate-fade-in';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.remove();
+            }, 2000);
+        }
+
+        // Generate one UUID on load
+        window.addEventListener('load', () => {
+            currentUUIDs = [generateUUIDv4()];
+            displayUUIDs();
+        });
+    </script>
+</body>
+</html>
