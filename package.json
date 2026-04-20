@@ -1,0 +1,16 @@
+{
+  "name": "uuid-generator-pro",
+  "version": "1.0.0",
+  "description": "Generate secure UUIDs, NanoIDs, CUIDs, and ULIDs instantly. Bulk generation, multiple formats, cryptographically secure.",
+  "main": "api/process.js",
+  "scripts": {
+    "dev": "node dev-server.js",
+    "vercel-build": "echo 'Build complete'"
+  },
+  "dependencies": {
+    "nanoid": "^5.0.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

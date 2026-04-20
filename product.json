@@ -1,0 +1,17 @@
+{
+  "name": "UUID Generator Pro",
+  "slug": "uuid-generator-pro",
+  "tagline": "Generate secure UUIDs, NanoIDs, CUIDs, and ULIDs instantly. Bulk generation, multiple formats, cryptographically secure.",
+  "description": "Generate secure UUIDs, NanoIDs, CUIDs, and ULIDs instantly. Bulk generation, multiple formats, cryptographically secure.",
+  "price": "9",
+  "features": [],
+  "tech_stack": "Vercel + Node.js",
+  "status": "building",
+  "vercel_url": null,
+  "github_url": null,
+  "lemonsqueezy_checkout_url": null,
+  "lemonsqueezy_product_id": null,
+  "webhook_url": null,
+  "created_cycle": null,
+  "deployed_cycle": null
+}

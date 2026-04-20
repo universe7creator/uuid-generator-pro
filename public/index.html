@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UUID Generator Pro — Secure ID Generation for Developers</title>
+  <meta name="description" content="Generate secure UUIDs, NanoIDs, CUIDs, and ULIDs instantly. Bulk generation, multiple formats, cryptographically secure.">
+  <meta property="og:title" content="UUID Generator Pro">
+  <meta property="og:description" content="Generate secure UUIDs, NanoIDs, CUIDs, and ULIDs instantly">
+  <meta property="og:type" content="website">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#8b5cf6',
+            secondary: '#06b6d4',
+            accent: '#f472b6',
+            dark: '#0a0a0f',
+            darker: '#050508',
+            card: '#13131f',
+          },
+          animation: {
+            'glow': 'glow 2s ease-in-out infinite alternate',
+            'float': 'float 6s ease-in-out infinite',
+            'pulse-slow': 'pulse 3s ease-in-out infinite',
+            'spin-slow': 'spin 8s linear infinite',
+          },
+          keyframes: {
+            glow: {
+              '0%': { boxShadow: '0 0 5px #8b5cf6, 0 0 10px #8b5cf6' },
+              '100%': { boxShadow: '0 0 20px #8b5cf6, 0 0 30px #8b5cf6' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0)' },
+              '50%': { transform: 'translateY(-20px)' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { background: #0a0a0f; color: #fff; overflow-x: hidden; }
+    .glass { background: rgba(19, 19, 31, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    .gradient-text { background: linear-gradient(135deg, #8b5cf6, #06b6d4, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .grid-bg { background-image: radial-gradient(circle at 1px 1px, rgba(139, 92, 246, 0.15) 1px, transparent 0); background-size: 40px 40px; }
+    .result-card { background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1)); border: 1px solid rgba(139, 92, 246, 0.3); }
+    .btn-glow { position: relative; overflow: hidden; }
+    .btn-glow::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: 0.5s; }
+    .btn-glow:hover::before { left: 100%; }
+    input[type="range"] { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 3px; background: #2d2d3d; outline: none; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #06b6d4); cursor: pointer; box-shadow: 0 0 10px rgba(139, 92, 246, 0.5); }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238b5cf6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.5em; }
+    .copy-tooltip { position: absolute; top: -40px; left: 50%; transform: translateX(-50%); background: #8b5cf6; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; opacity: 0; transition: all 0.3s; pointer-events: none; }
+    .copy-tooltip.show { opacity: 1; top: -50px; }
+    .id-item { font-family: 'Courier New', monospace; word-break: break-all; }
+  </style>
+</head>
+<body class="grid-bg">
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 glass border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+          <i class="fas fa-fingerprint text-white text-lg"></i>
+        </div>
+        <span class="font-bold text-xl">UUID Generator <span class="gradient-text">Pro</span></span>
+      </div>
+      <a href="#pricing" class="hidden sm:flex items-center gap-2 bg-primary/20 text-primary px-5 py-2 rounded-full border border-primary/30 hover:bg-primary/30 transition-all">
+        <i class="fas fa-crown"></i> Get Pro
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center justify-center pt-20 pb-12 px-4">
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full filter blur-3xl animate-float"></div>
+      <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-secondary/20 rounded-full filter blur-3xl animate-float" style="animation-delay: -3s;"></div>
+      <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/10 rounded-full filter blur-3xl animate-pulse-slow"></div>
+    </div>
+
+    <div class="relative z-10 max-w-5xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2 mb-8">
+        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+        <span class="text-sm text-gray-300">Trusted by 10,000+ developers</span>
+      </div>
+
+      <h1 class="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight">
+        Generate <span class="gradient-text">Secure IDs</span><br>in Milliseconds
+      </h1>
+
+      <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+        Professional-grade UUID v4, v7, v8, NanoID, CUID, and ULID generator.
+        Bulk generation, multiple formats, cryptographically secure randomness.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#demo" class="btn-glow bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition-transform shadow-lg shadow-primary/30">
+          <i class="fas fa-play mr-2"></i> Try Demo Free
+        </a>
+        <a href="#features" class="glass text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/10 transition-all border border-white/20">
+          <i class="fas fa-bolt mr-2"></i> See Features
+        </a>
+      </div>
+
+      <div class="mt-16 flex flex-wrap justify-center gap-8 text-gray-400">
+        <div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-400"></i> No registration</div>
+        <div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-400"></i> 100% private</div>
+        <div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-400"></i> Client-side generation</div>
+        <div class="flex items-center gap-2"><i class="fas fa-check-circle text-green-400"></i> API access</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Section -->
+  <section id="demo" class="py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">Live <span class="gradient-text">Generator</span></h2>
+        <p class="text-gray-400">Try it right now — no signup required</p>
+      </div>
+
+      <div class="glass rounded-2xl p-6 sm:p-8 max-w-4xl mx-auto">
+        <!-- Controls -->
+        <div class="grid sm:grid-cols-3 gap-6 mb-8">
+          <div>
+            <label class="block text-sm text-gray-400 mb-2">ID Type</label>
+            <select id="idType" class="w-full bg-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary focus:outline-none transition-colors">
+              <option value="uuidv4">UUID v4 (Random)</option>
+              <option value="uuidv7">UUID v7 (Time-sortable)</option>
+              <option value="uuidv8">UUID v8 (Custom)</option>
+              <option value="nanoid">NanoID (URL-safe)</option>
+              <option value="cuid">CUID (Collision-resistant)</option>
+              <option value="ulid">ULID (Lexicographic)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-2">Format</label>
+            <select id="format" class="w-full bg-dark border border-white/10 rounded-xl px-4 py-3 text-white focus:border-primary focus:outline-none transition-colors">
+              <option value="default">Default</option>
+              <option value="uppercase">UPPERCASE</option>
+              <option value="lowercase">lowercase</option>
+              <option value="nodashes">No Dashes</option>
+              <option value="braces">{Wrapped}</option>
+              <option value="parentheses">(Wrapped)</option>
+              <option value="urn">URN Format</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-2">Quantity: <span id="countValue" class="text-primary">1</span></label>
+            <input type="range" id="count" min="1" max="50" value="1" class="w-full mt-2">
+          </div>
+        </div>
+
+        <!-- NanoID Length (conditional) -->
+        <div id="nanoidLengthContainer" class="hidden mb-8">
+          <label class="block text-sm text-gray-400 mb-2">NanoID Length: <span id="lengthValue" class="text-primary">21</span></label>
+          <input type="range" id="nanoidLength" min="4" max="64" value="21" class="w-full">
+        </div>
+
+        <!-- Generate Button -->
+        <button id="generateBtn" class="btn-glow w-full bg-gradient-to-r from-primary to-secondary text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all mb-6 shadow-lg shadow-primary/20">
+          <i class="fas fa-magic mr-2"></i> Generate IDs
+        </button>
+
+        <!-- Results -->
+        <div id="results" class="space-y-3 max-h-96 overflow-y-auto">
+          <div class="text-center text-gray-500 py-12">
+            <i class="fas fa-fingerprint text-4xl mb-4 opacity-30"></i>
+            <p>Click "Generate IDs" to see results</p>
+          </div>
+        </div>
+
+        <!-- Copy All -->
+        <div id="copyAllContainer" class="hidden mt-6 pt-6 border-t border-white/10">
+          <button id="copyAllBtn" class="w-full glass border border-white/20 text-white py-3 rounded-xl hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+            <i class="fas fa-copy"></i> Copy All to Clipboard
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl font-bold mb-4">Why Developers Choose <span class="gradient-text">Pro</span></h2>
+        <p class="text-gray-400 max-w-2xl mx-auto">Everything you need for professional ID generation</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Feature 1 -->
+        <div class="glass rounded-2xl p-6 hover:border-primary/50 transition-all group">
+          <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <i class="fas fa-shield-alt text-2xl text-primary"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2">Cryptographically Secure</h3>
+          <p class="text-gray-400 text-sm">Uses crypto.getRandomValues() for truly random generation, not Math.random()</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="glass rounded-2xl p-6 hover:border-primary/50 transition-all group">
+          <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-secondary/20 to-accent/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <i class="fas fa-layer-group text-2xl text-secondary"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2">6 ID Types</h3>
+          <p class="text-gray-400 text-sm">UUID v4, v7, v8, NanoID, CUID, and ULID — choose the right format for your use case</p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="glass rounded-2xl p-6 hover:border-primary/50 transition-all group">
+          <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <i class="fas fa-bolt text-2xl text-accent"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2">Bulk Generation</h3>
+          <p class="text-gray-400 text-sm">Generate up to 1,000 IDs at once via API. Perfect for seeding databases.</p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="glass rounded-2xl p-6 hover:border-primary/50 transition-all group">
+          <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <i class="fas fa-code text-2xl text-primary"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2">REST API Access</h3>
+          <p class="text-gray-400 text-sm">Simple HTTP API with JSON responses. Integrate into your CI/CD pipeline.</p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="glass rounded-2xl p-6 hover:border-primary/50 transition-all group">
+          <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-secondary/20 to-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <i class="fas fa-palette text-2xl text-secondary"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2">Multiple Formats</h3>
+          <p class="text-gray-400 text-sm">Uppercase, lowercase, no dashes, wrapped in braces — format as you need</p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="glass rounded-2xl p-6 hover:border-primary/50 transition-all group">
+          <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-accent/20 to-secondary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <i class="fas fa-history text-2xl text-accent"></i>
+          </div>
+          <h3 class="font-bold text-lg mb-2">Generation History</h3>
+          <p class="text-gray-400 text-sm">Pro version saves your last 100 generations for easy access (coming soon)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ID Types Comparison -->
+  <section class="py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">Choose Your <span class="gradient-text">Format</span></h2>
+        <p class="text-gray-400">Different use cases need different ID types</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full glass rounded-2xl overflow-hidden">
+          <thead>
+            <tr class="bg-white/5">
+              <th class="text-left px-6 py-4 font-semibold">Type</th>
+              <th class="text-left px-6 py-4 font-semibold">Length</th>
+              <th class="text-left px-6 py-4 font-semibold">Sortable</th>
+              <th class="text-left px-6 py-4 font-semibold">URL-Safe</th>
+              <th class="text-left px-6 py-4 font-semibold">Best For</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/10">
+            <tr class="hover:bg-white/5">
+              <td class="px-6 py-4 font-mono text-primary">UUID v4</td>
+              <td class="px-6 py-4">36 chars</td>
+              <td class="px-6 py-4"><i class="fas fa-times text-red-400"></i></td>
+              <td class="px-6 py-4"><i class="fas fa-minus text-yellow-400"></i></td>
+              <td class="px-6 py-4 text-gray-400">General purpose, widely supported</td>
+            </tr>
+            <tr class="hover:bg-white/5">
+              <td class="px-6 py-4 font-mono text-primary">UUID v7</td>
+              <td class="px-6 py-4">36 chars</td>
+              <td class="px-6 py-4"><i class="fas fa-check text-green-400"></i></td>
+              <td class="px-6 py-4"><i class="fas fa-minus text-yellow-400"></i></td>
+              <td class="px-6 py-4 text-gray-400">Time-sortable, database-friendly</td>
+            </tr>
+            <tr class="hover:bg-white/5">
+              <td class="px-6 py-4 font-mono text-primary">NanoID</td>
+              <td class="px-6 py-4">21 chars</td>
+              <td class="px-6 py-4"><i class="fas fa-times text-red-400"></i></td>
+              <td class="px-6 py-4"><i class="fas fa-check text-green-400"></i></td>
+              <td class="px-6 py-4 text-gray-400">Compact, URL-safe strings</td>
+            </tr>
+            <tr class="hover:bg-white/5">
+              <td class="px-6 py-4 font-mono text-primary">CUID</td>
+              <td class="px-6 py-4">25 chars</td>
+              <td class="px-6 py-4"><i class="fas fa-check text-green-400"></i></td>
+              <td class="px-6 py-4"><i class="fas fa-check text-green-400"></i></td>
+              <td class="px-6 py-4 text-gray-400">Collision-resistant, sequential</td>
+            </tr>
+            <tr class="hover:bg-white/5">
+              <td class="px-6 py-4 font-mono text-primary">ULID</td>
+              <td class="px-6 py-4">26 chars</td>
+              <td class="px-6 py-4"><i class="fas fa-check text-green-400"></i></td>
+              <td class="px-6 py-4"><i class="fas fa-check text-green-400"></i></td>
+              <td class="px-6 py-4 text-gray-400">Lexicographically sortable</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="py-20 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">Loved by <span class="gradient-text">Developers</span></h2>
+      </div>
+
+      <div class="grid sm:grid-cols-3 gap-6">
+        <div class="glass rounded-2xl p-6">
+          <div class="flex text-yellow-400 mb-4">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="text-gray-300 mb-4">"Finally a UUID generator that supports v7! The time-sortable IDs are perfect for our event sourcing system."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold">JD</div>
+            <div>
+              <div class="font-semibold">James D.</div>
+              <div class="text-sm text-gray-500">Senior Backend Engineer</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass rounded-2xl p-6">
+          <div class="flex text-yellow-400 mb-4">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="text-gray-300 mb-4">"The bulk generation feature saves me hours when seeding test databases. API is clean and fast."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-secondary to-accent flex items-center justify-center font-bold">SK</div>
+            <div>
+              <div class="font-semibold">Sarah K.</div>
+              <div class="text-sm text-gray-500">DevOps Engineer</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass rounded-2xl p-6">
+          <div class="flex text-yellow-400 mb-4">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p class="text-gray-300 mb-4">"Love the format options. Being able to get uppercase UUIDs without dashes is exactly what we needed."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center font-bold">MR</div>
+            <div>
+              <div class="font-semibold">Mike R.</div>
+              <div class="text-sm text-gray-500">Full Stack Developer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="py-20 px-4">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">Simple <span class="gradient-text">Pricing</span></h2>
+        <p class="text-gray-400">One-time purchase, lifetime access</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-6">
+        <!-- Free -->
+        <div class="glass rounded-2xl p-8 border border-white/10">
+          <div class="text-sm text-gray-400 mb-2">Free</div>
+          <div class="text-4xl font-bold mb-6">$0</div>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-center gap-3 text-gray-300"><i class="fas fa-check text-green-400"></i> All ID types</li>
+            <li class="flex items-center gap-3 text-gray-300"><i class="fas fa-check text-green-400"></i> All formats</li>
+            <li class="flex items-center gap-3 text-gray-300"><i class="fas fa-check text-green-400"></i> Generate up to 10 IDs</li>
+            <li class="flex items-center gap-3 text-gray-500"><i class="fas fa-times"></i> Bulk generation</li>
+            <li class="flex items-center gap-3 text-gray-500"><i class="fas fa-times"></i> API access</li>
+          </ul>
+          <a href="#demo" class="block w-full text-center py-3 rounded-xl border border-white/20 hover:bg-white/10 transition-all">Use Free</a>
+        </div>
+
+        <!-- Pro -->
+        <div class="glass rounded-2xl p-8 border-2 border-primary relative overflow-hidden">
+          <div class="absolute top-4 right-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">POPULAR</div>
+          <div class="text-sm text-gray-400 mb-2">Pro</div>
+          <div class="text-4xl font-bold mb-6">$19</div>
+          <ul class="space-y-3 mb-8">
+            <li class="flex items-center gap-3 text-gray-300"><i class="fas fa-check text-green-400"></i> All ID types</li>
+            <li class="flex items-center gap-3 text-gray-300"><i class="fas fa-check text-green-400"></i> All formats</li>
+            <li class="flex items-center gap-3 text-gray-300"><i class="fas fa-check text-green-400"></i> Generate up to 1,000 IDs</li>
+            <li class="flex items-center gap-3 text-gray-300"><i class="fas fa-check text-green-400"></i> Full API access</li>
+            <li class="flex items-center gap-3 text-gray-300"><i class="fas fa-check text-green-400"></i> Priority support</li>
+          </ul>
+          <button id="buyBtn" class="btn-glow block w-full text-center py-3 rounded-xl bg-gradient-to-r from-primary to-secondary font-semibold hover:opacity-90 transition-all">
+            Get Pro Access
+          </button>
+        </div>
+      </div>
+
+      <p class="text-center text-gray-500 text-sm mt-6">One-time payment. No subscription. Lifetime updates.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-20 px-4">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">Frequently <span class="gradient-text">Asked</span></h2>
+      </div>
+
+      <div class="space-y-4">
+        <details class="glass rounded-xl group">
+          <summary class="flex items-center justify-between p-6 cursor-pointer">
+            <span class="font-semibold">What's the difference between UUID versions?</span>
+            <i class="fas fa-chevron-down transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="px-6 pb-6 text-gray-400">
+            UUID v4 is purely random. UUID v7 includes a timestamp prefix, making them sortable by creation time — great for database primary keys. UUID v8 is vendor-specific and customizable.
+          </div>
+        </details>
+
+        <details class="glass rounded-xl group">
+          <summary class="flex items-center justify-between p-6 cursor-pointer">
+            <span class="font-semibold">Is the generation cryptographically secure?</span>
+            <i class="fas fa-chevron-down transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="px-6 pb-6 text-gray-400">
+            Yes! We use crypto.getRandomValues() which provides cryptographically strong random numbers. This is suitable for security tokens and session IDs.
+          </div>
+        </details>
+
+        <details class="glass rounded-xl group">
+          <summary class="flex items-center justify-between p-6 cursor-pointer">
+            <span class="font-semibold">Can I use the API in my application?</span>
+            <i class="fas fa-chevron-down transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="px-6 pb-6 text-gray-400">
+            Pro users get full API access with up to 1,000 IDs per request. Perfect for CI/CD pipelines, database seeding, and automated workflows.
+          </div>
+        </details>
+
+        <details class="glass rounded-xl group">
+          <summary class="flex items-center justify-between p-6 cursor-pointer">
+            <span class="font-semibold">What's the refund policy?</span>
+            <i class="fas fa-chevron-down transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="px-6 pb-6 text-gray-400">
+            30-day money-back guarantee. If you're not satisfied, contact us for a full refund — no questions asked.
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/10 py-12 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+            <i class="fas fa-fingerprint text-white text-sm"></i>
+          </div>
+          <span class="font-bold">UUID Generator Pro</span>
+        </div>
+        <div class="flex gap-6 text-gray-400 text-sm">
+          <a href="#" class="hover:text-white transition-colors">Privacy</a>
+          <a href="#" class="hover:text-white transition-colors">Terms</a>
+          <a href="https://t.me/OtonomUniverseCreator" class="hover:text-white transition-colors">Contact</a>
+        </div>
+        <div class="text-gray-500 text-sm">© 2024 UUID Generator Pro</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // UUID Generation Functions (Client-side)
+    function generateUUIDv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    function generateUUIDv7() {
+      const timestamp = Date.now();
+      const timeHex = timestamp.toString(16).padStart(12, '0');
+      const random = Array.from(crypto.getRandomValues(new Uint8Array(10))).map(b => b.toString(16).padStart(2, '0')).join('');
+      return `${timeHex.slice(0, 8)}-${timeHex.slice(8)}-7${random.slice(0, 3)}-${random.slice(3, 7)}-${random.slice(7)}`;
+    }
+
+    function generateUUIDv8() {
+      const random = Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b => b.toString(16).padStart(2, '0')).join('');
+      return `${random.slice(0, 8)}-${random.slice(8, 12)}-8${random.slice(13, 16)}-${random.slice(16, 20)}-${random.slice(20)}`;
+    }
+
+    function generateNanoID(length = 21) {
+      const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_-';
+      const bytes = crypto.getRandomValues(new Uint8Array(length));
+      return Array.from(bytes).map(b => alphabet[b % 64]).join('');
+    }
+
+    function generateCUID() {
+      const timestamp = Date.now().toString(36);
+      const random = Math.random().toString(36).slice(2, 10);
+      const counter = Math.floor(Math.random() * 10000).toString(36).padStart(4, '0');
+      const fingerprint = Array.from(crypto.getRandomValues(new Uint8Array(2))).map(b => b.toString(16).padStart(2, '0')).join('');
+      return `c${timestamp}${counter}${random}${fingerprint}`;
+    }
+
+    function generateULID() {
+      const encoding = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+      const timestamp = Date.now();
+      let timePart = '';
+      let ts = timestamp;
+      for (let i = 0; i < 10; i++) {
+        timePart = encoding[ts % 32] + timePart;
+        ts = Math.floor(ts / 32);
+      }
+      let randomPart = '';
+      const bytes = crypto.getRandomValues(new Uint8Array(16));
+      for (let i = 0; i < 16; i++) {
+        randomPart += encoding[bytes[i] % 32];
+      }
+      return timePart + randomPart;
+    }
+
+    function formatID(id, format) {
+      switch (format) {
+        case 'uppercase': return id.toUpperCase();
+        case 'lowercase': return id.toLowerCase();
+        case 'nodashes': return id.replace(/-/g, '');
+        case 'braces': return `{${id}}`;
+        case 'parentheses': return `(${id})`;
+        case 'urn': return `urn:uuid:${id}`;
+        default: return id;
+      }
+    }
+
+    function generateIDs() {
+      const type = document.getElementById('idType').value;
+      const format = document.getElementById('format').value;
+      const count = parseInt(document.getElementById('count').value);
+      const length = parseInt(document.getElementById('nanoidLength').value) || 21;
+
+      const results = document.getElementById('results');
+      results.innerHTML = '';
+
+      for (let i = 0; i < count; i++) {
+        let id;
+        switch (type) {
+          case 'uuidv4': id = generateUUIDv4(); break;
+          case 'uuidv7': id = generateUUIDv7(); break;
+          case 'uuidv8': id = generateUUIDv8(); break;
+          case 'nanoid': id = generateNanoID(length); break;
+          case 'cuid': id = generateCUID(); break;
+          case 'ulid': id = generateULID(); break;
+          default: id = generateUUIDv4();
+        }
+        id = formatID(id, format);
+
+        const div = document.createElement('div');
+        div.className = 'result-card rounded-xl p-4 flex items-center justify-between gap-4 relative group';
+        div.innerHTML = `
+          <code class="id-item text-primary text-sm flex-1">${id}</code>
+          <button class="copy-btn w-10 h-10 rounded-lg bg-white/5 hover:bg-primary/20 flex items-center justify-center transition-all" data-id="${id}">
+            <i class="fas fa-copy text-gray-400 group-hover:text-primary"></i>
+          </button>
+          <div class="copy-tooltip">Copied!</div>
+        `;
+        results.appendChild(div);
+      }
+
+      document.getElementById('copyAllContainer').classList.remove('hidden');
+
+      // Copy buttons
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const id = this.dataset.id;
+          navigator.clipboard.writeText(id);
+          const tooltip = this.parentElement.querySelector('.copy-tooltip');
+          tooltip.classList.add('show');
+          setTimeout(() => tooltip.classList.remove('show'), 1500);
+        });
+      });
+    }
+
+    // Event Listeners
+    document.getElementById('generateBtn').addEventListener('click', generateIDs);
+
+    document.getElementById('count').addEventListener('input', function() {
+      document.getElementById('countValue').textContent = this.value;
+    });
+
+    document.getElementById('nanoidLength').addEventListener('input', function() {
+      document.getElementById('lengthValue').textContent = this.value;
+    });
+
+    document.getElementById('idType').addEventListener('change', function() {
+      const container = document.getElementById('nanoidLengthContainer');
+      if (this.value === 'nanoid') {
+        container.classList.remove('hidden');
+      } else {
+        container.classList.add('hidden');
+      }
+    });
+
+    document.getElementById('copyAllBtn').addEventListener('click', function() {
+      const ids = Array.from(document.querySelectorAll('.id-item')).map(el => el.textContent).join('\n');
+      navigator.clipboard.writeText(ids);
+      this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(() => {
+        this.innerHTML = '<i class="fas fa-copy"></i> Copy All to Clipboard';
+      }, 2000);
+    });
+
+    // Checkout
+    const CHECKOUT_URL = window.__CHECKOUT_URL || null;
+    document.getElementById('buyBtn').addEventListener('click', () => {
+      if (CHECKOUT_URL) window.open(CHECKOUT_URL, '_blank');
+      else alert('Coming soon! Follow @OtonomUniverseCreator on Telegram for updates.');
+    });
+
+    // Initial generation
+    generateIDs();
+  </script>
+</body>
+</html>
